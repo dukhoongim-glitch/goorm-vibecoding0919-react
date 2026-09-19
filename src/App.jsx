@@ -28,6 +28,8 @@ function App() {
   const [quote, setQuote] = useState(quotes[0]);
   const [favoriteQuotes, setFavoriteQuotes] = useState([]);
   const [keyword, setKeyword] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationError, setGenerationError] = useState('');
 
   // 현재 명언과 다른 명언이 선택되도록 목록에서 무작위로 고릅니다.
   const showNewQuote = () => {
@@ -56,6 +58,38 @@ function App() {
   const selectQuote = (selectedQuote) => {
     setQuote(selectedQuote);
     setKeyword('');
+  };
+
+  // 입력한 키워드로 OpenAI에 새로운 명언을 요청합니다.
+  const generateAiQuote = async () => {
+    if (!keyword.trim()) {
+      setGenerationError('먼저 키워드를 입력해주세요.');
+      return;
+    }
+
+    setIsGenerating(true);
+    setGenerationError('');
+
+    try {
+      const response = await fetch('/api/generate-quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ keyword }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error);
+      }
+
+      setQuote(data);
+      setKeyword('');
+    } catch (error) {
+      setGenerationError(error.message || '명언을 생성하지 못했습니다.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   // 저장 목록에서 선택한 명언을 제거합니다.
@@ -112,6 +146,11 @@ function App() {
           placeholder="예: 성공, 용기, 배움"
           className="search-input"
         />
+        <button type="button" className="ai-button" onClick={generateAiQuote} disabled={isGenerating}>
+          {isGenerating ? 'GPT가 명언을 만드는 중...' : 'GPT로 명언 만들기'}
+        </button>
+
+        {generationError && <p className="search-error">{generationError}</p>}
 
         {keyword.trim() === '' ? (
           <p className="search-hint">검색어를 입력하면 관련 명언을 보여드립니다.</p>

@@ -234,6 +234,37 @@ h1 {
   border-color: rgba(196, 129, 95, 0.6);
 }
 
+.ai-button {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 12px;
+  border: 0;
+  border-radius: 6px;
+  color: #fffdf8;
+  background: #b06c4f;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.ai-button:hover:not(:disabled) {
+  background: #96563f;
+  transform: translateY(-1px);
+}
+
+.ai-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.search-error {
+  margin: 12px 0 0;
+  color: #a54f42;
+  font-size: 0.86rem;
+  text-align: center;
+}
+
 .search-hint,
 .search-empty,
 .empty-message {
