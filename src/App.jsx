@@ -72,13 +72,17 @@ function App() {
     setGenerationError('');
 
     try {
-      const response = await fetch('/api/generate-quote', {
+      const apiBaseUrl = import.meta.env.VITE_API_URL || '';
+      const response = await fetch(`${apiBaseUrl}/api/generate-quote`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ keyword, language }),
       });
 
-      const data = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      const data = contentType.includes('application/json')
+        ? await response.json()
+        : { error: '공개 사이트의 API 서버가 연결되지 않았습니다. 백엔드 주소를 설정해주세요.' };
 
       if (!response.ok) {
         throw new Error(data.error);

@@ -9,6 +9,17 @@ const openai = process.env.OPENAI_API_KEY
   : null;
 
 app.use(express.json());
+app.use((request, response, next) => {
+  response.header('Access-Control-Allow-Origin', process.env.FRONTEND_URL || '*');
+  response.header('Access-Control-Allow-Headers', 'Content-Type');
+  response.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+
+  if (request.method === 'OPTIONS') {
+    return response.sendStatus(204);
+  }
+
+  next();
+});
 
 app.post('/api/generate-quote', async (request, response) => {
   const { keyword, language = 'English' } = request.body;
