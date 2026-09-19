@@ -28,6 +28,7 @@ function App() {
   const [quote, setQuote] = useState(quotes[0]);
   const [favoriteQuotes, setFavoriteQuotes] = useState([]);
   const [keyword, setKeyword] = useState('');
+  const [language, setLanguage] = useState('English');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationError, setGenerationError] = useState('');
 
@@ -74,7 +75,7 @@ function App() {
       const response = await fetch('/api/generate-quote', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ keyword }),
+        body: JSON.stringify({ keyword, language }),
       });
 
       const data = await response.json();
@@ -146,6 +147,17 @@ function App() {
           placeholder="예: 성공, 용기, 배움"
           className="search-input"
         />
+        <label className="language-label" htmlFor="quote-language">생성 언어</label>
+        <select
+          id="quote-language"
+          value={language}
+          onChange={(event) => setLanguage(event.target.value)}
+          className="language-select"
+        >
+          <option value="English">English</option>
+          <option value="French">Français</option>
+          <option value="German">Deutsch</option>
+        </select>
         <button type="button" className="ai-button" onClick={generateAiQuote} disabled={isGenerating}>
           {isGenerating ? 'GPT가 명언을 만드는 중...' : 'GPT로 명언 만들기'}
         </button>

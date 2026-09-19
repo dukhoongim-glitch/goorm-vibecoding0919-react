@@ -11,7 +11,8 @@ const openai = process.env.OPENAI_API_KEY
 app.use(express.json());
 
 app.post('/api/generate-quote', async (request, response) => {
-  const { keyword } = request.body;
+  const { keyword, language = 'English' } = request.body;
+  const supportedLanguages = ['English', 'French', 'German'];
 
   if (!openai) {
     return response.status(500).json({ error: 'OPENAI_API_KEY가 설정되지 않았습니다.' });
@@ -21,6 +22,10 @@ app.post('/api/generate-quote', async (request, response) => {
     return response.status(400).json({ error: '키워드를 입력해주세요.' });
   }
 
+  if (!supportedLanguages.includes(language)) {
+    return response.status(400).json({ error: '지원하지 않는 언어입니다.' });
+  }
+
   try {
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -28,11 +33,11 @@ app.post('/api/generate-quote', async (request, response) => {
       messages: [
         {
           role: 'system',
-          content: '당신은 한국어 명언 생성기입니다. 반드시 JSON 형식 {"text":"명언", "author":"저자 또는 출처"}만 반환하세요. 기존 유명 명언을 그대로 복사하지 말고, 창작한 짧은 명언을 만들어주세요.',
+          content: `You are a quote generator. Write the quote in ${language}. Return only JSON in the format {"text":"quote", "author":"original source"}. Create a short original quote instead of copying a famous quote.`,
         },
         {
           role: 'user',
-          content: `키워드 "${keyword.trim()}"와 관련된 따뜻하고 기억하기 쉬운 명언을 하나 만들어주세요.`,
+          content: `Create one warm and memorable quote related to the keyword "${keyword.trim()}". The quote and author field must both be written in ${language}.`,
         },
       ],
     });
@@ -42,6 +47,7 @@ app.post('/api/generate-quote', async (request, response) => {
       id: `ai-${Date.now()}`,
       text: generatedQuote.text,
       author: generatedQuote.author,
+      language,
       source: 'openai',
     });
   } catch (error) {

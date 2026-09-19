@@ -234,6 +234,31 @@ h1 {
   border-color: rgba(196, 129, 95, 0.6);
 }
 
+.language-label {
+  display: block;
+  margin-top: 14px;
+  color: #6d7d74;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.language-select {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 6px;
+  padding: 0 12px;
+  border: 1px solid rgba(77, 105, 91, 0.2);
+  border-radius: 8px;
+  color: #263f38;
+  background: rgba(255, 253, 248, 0.9);
+  font-size: 0.92rem;
+}
+
+.language-select:focus {
+  outline: 3px solid rgba(196, 129, 95, 0.2);
+  border-color: rgba(196, 129, 95, 0.6);
+}
+
 .ai-button {
   width: 100%;
   min-height: 46px;
